@@ -26,3 +26,4 @@ databases:
     databaseName: leadshark
     user: leadshark_admin
     plan: free
+

@@ -27,3 +27,4 @@ class UnsubscribeResponse(BaseModel):
     success: bool
     message: str
     email: Optional[str] = None
+

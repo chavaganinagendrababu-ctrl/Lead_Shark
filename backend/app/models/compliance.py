@@ -12,3 +12,4 @@ class SuppressionList(Base):
     notes = Column(Text, nullable=True)
     added_by = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+

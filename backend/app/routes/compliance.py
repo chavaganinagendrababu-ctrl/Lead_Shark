@@ -106,3 +106,4 @@ def process_unsubscribe(
         message=f"Email address '{email}' has been successfully unsubscribed and placed on our global suppression list.",
         email=email
     )
+

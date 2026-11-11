@@ -29,3 +29,4 @@ class UserCreate(BaseModel):
     password: str
     full_name: str
     role: str = "sales"
+

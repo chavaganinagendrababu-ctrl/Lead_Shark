@@ -48,3 +48,4 @@ def list_audit_logs(
         page=page,
         size=size
     )
+

@@ -52,3 +52,4 @@ class CampaignApproval(Base):
 
     campaign = relationship("Campaign", back_populates="approvals")
     reviewer = relationship("User")
+

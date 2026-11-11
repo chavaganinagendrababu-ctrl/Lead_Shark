@@ -12,3 +12,4 @@ class Company(Base):
     website = Column(String(500), nullable=True)
     region = Column(String(100), nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+

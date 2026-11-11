@@ -25,3 +25,4 @@ class SimpleRateLimiter:
 
 auth_rate_limiter = SimpleRateLimiter(requests_per_minute=20)
 general_rate_limiter = SimpleRateLimiter(requests_per_minute=120)
+

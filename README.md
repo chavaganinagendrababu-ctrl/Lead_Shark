@@ -266,3 +266,4 @@ All 13 integration and unit tests pass with 100% success.
 1. **Integration with External RAG Agent:** Wire the `BaseSectorClassifier` interface to an external LLM / vector retrieval service for nuanced company categorization.
 2. **Mailbox-Level SMTP Handshake:** Integrate specialized deliverability APIs (e.g. ZeroBounce, NeverBounce) for mailbox-level ping beyond DNS MX checks.
 3. **Official Provider Adapters:** Implement SendGrid / Amazon SES / Postmark adapters with webhooks for automated bounce, open, and spam complaint synchronization once domain reputation and warmup are complete.
+

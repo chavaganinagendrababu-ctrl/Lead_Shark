@@ -58,3 +58,4 @@ class LeadVerifyResult(BaseModel):
     status: str # valid, invalid, risky, unknown
     details: str
     mx_records_found: bool
+

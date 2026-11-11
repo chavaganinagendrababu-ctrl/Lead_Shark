@@ -41,3 +41,4 @@ export const Navbar = ({ title, subtitle }) => {
     </header>
   );
 };
+

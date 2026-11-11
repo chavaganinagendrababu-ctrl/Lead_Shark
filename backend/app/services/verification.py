@@ -107,3 +107,4 @@ def verify_email_address(email: str) -> dict:
             "details": f"DNS MX check inconclusive or unreachable: {str(e)}",
             "mx_records_found": False
         }
+

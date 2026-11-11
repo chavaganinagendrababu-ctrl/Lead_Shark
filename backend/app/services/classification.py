@@ -71,3 +71,4 @@ class RuleBasedSectorClassifier(BaseSectorClassifier):
         }
 
 classifier_service = RuleBasedSectorClassifier()
+

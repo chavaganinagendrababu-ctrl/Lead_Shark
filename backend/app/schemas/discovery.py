@@ -21,3 +21,4 @@ class DiscoveryJobResponse(BaseModel):
 
     class Config:
         from_attributes = True
+

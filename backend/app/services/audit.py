@@ -29,3 +29,4 @@ def log_audit(
     db.commit()
     db.refresh(audit_entry)
     return audit_entry
+

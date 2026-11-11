@@ -13,3 +13,4 @@ class AuditLog(Base):
     details = Column(Text, nullable=True)
     ip_address = Column(String(100), nullable=True)
     timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True, nullable=False)
+

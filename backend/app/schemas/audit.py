@@ -20,3 +20,4 @@ class AuditLogPagination(BaseModel):
     total: int
     page: int
     size: int
+

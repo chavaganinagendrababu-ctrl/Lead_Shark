@@ -31,3 +31,4 @@ class DashboardStats(BaseModel):
     region_distribution: List[RegionStat]
     recent_leads: List[RecentLeadStat]
     recent_activities: List[Dict[str, Any]]
+

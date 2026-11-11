@@ -215,3 +215,4 @@ def test_13_audit_logs_generated(client: TestClient):
     assert len(items) > 0
     actions = [a["action"] for a in items]
     assert any("LOGIN" in a or "LEAD" in a or "CAMPAIGN" in a for a in actions)
+

@@ -94,3 +94,4 @@ def validate_campaign_eligibility(db: Session, lead: Lead, campaign: Campaign) -
         return False, f"Ineligible: Lead sector '{lead.sector}' does not match campaign target sector '{campaign.sector}'."
 
     return True, "Lead is fully compliant and eligible for outreach."
+

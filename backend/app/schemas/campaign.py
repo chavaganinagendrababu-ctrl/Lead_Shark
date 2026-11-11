@@ -54,3 +54,4 @@ class CampaignEligibilityResponse(BaseModel):
     unapproved_leads_count: int
     unverified_leads_count: int
     is_campaign_approved: bool
+

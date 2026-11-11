@@ -81,3 +81,4 @@ def get_dashboard_stats(
         recent_leads=recent_leads,
         recent_activities=recent_activities
     )
+
