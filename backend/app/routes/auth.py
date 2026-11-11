@@ -1,6 +1,7 @@
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from app.config import settings
 from app.database import get_db
@@ -16,7 +17,8 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 def login(login_req: LoginRequest, request: Request, db: Session = Depends(get_db)):
     auth_rate_limiter.check_rate_limit(request)
     
-    user = db.query(User).filter(User.email == login_req.email.lower().strip()).first()
+    clean_email = login_req.email.lower().strip()
+    user = db.query(User).filter(func.lower(func.trim(User.email)) == clean_email).first()
     if not user or not verify_password(login_req.password, user.hashed_password):
         # Log failed attempt
         log_audit(

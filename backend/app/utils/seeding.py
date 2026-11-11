@@ -1,48 +1,46 @@
 from datetime import datetime, timezone
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.config import settings
 from app.models.user import User, UserRole
 from app.models.lead import Lead
 from app.models.compliance import SuppressionList
 from app.models.campaign import Campaign
 from app.models.audit import AuditLog
-from app.security.auth import get_password_hash
+from app.security.auth import get_password_hash, verify_password
 
 def seed_database(db: Session):
     """Initializes development users, demo leads, compliance list, and sample campaigns."""
-    # 1. Seed Users
-    admin = db.query(User).filter(User.email == settings.ADMIN_EMAIL).first()
-    if not admin:
-        admin = User(
-            email=settings.ADMIN_EMAIL,
-            full_name=settings.ADMIN_NAME,
-            hashed_password=get_password_hash(settings.ADMIN_PASSWORD),
-            role=UserRole.ADMIN.value,
-            is_active=True
-        )
-        db.add(admin)
+    # 1. Seed & Sync Users (ensures Admin, Reviewer, and Sales accounts are active and password-synced)
+    def sync_user(email: str, name: str, password: str, role: str) -> User:
+        clean_email = email.lower().strip()
+        user = db.query(User).filter(func.lower(func.trim(User.email)) == clean_email).first()
+        if not user:
+            user = User(
+                email=clean_email,
+                full_name=name,
+                hashed_password=get_password_hash(password),
+                role=role,
+                is_active=True
+            )
+            db.add(user)
+            db.flush()
+        else:
+            # Sync existing user record: ensure active status, role, and email formatting
+            user.email = clean_email
+            user.full_name = name
+            user.role = role
+            user.is_active = True
+            # Secure Account Recovery: If the stored password hash does not verify against
+            # the current configured password, safely rehash and update it.
+            if not verify_password(password, user.hashed_password):
+                user.hashed_password = get_password_hash(password)
+            db.flush()
+        return user
 
-    reviewer = db.query(User).filter(User.email == settings.REVIEWER_EMAIL).first()
-    if not reviewer:
-        reviewer = User(
-            email=settings.REVIEWER_EMAIL,
-            full_name=settings.REVIEWER_NAME,
-            hashed_password=get_password_hash(settings.REVIEWER_PASSWORD),
-            role=UserRole.REVIEWER.value,
-            is_active=True
-        )
-        db.add(reviewer)
-
-    sales = db.query(User).filter(User.email == settings.SALES_EMAIL).first()
-    if not sales:
-        sales = User(
-            email=settings.SALES_EMAIL,
-            full_name=settings.SALES_NAME,
-            hashed_password=get_password_hash(settings.SALES_PASSWORD),
-            role=UserRole.SALES.value,
-            is_active=True
-        )
-        db.add(sales)
+    admin = sync_user(settings.ADMIN_EMAIL, settings.ADMIN_NAME, settings.ADMIN_PASSWORD, UserRole.ADMIN.value)
+    reviewer = sync_user(settings.REVIEWER_EMAIL, settings.REVIEWER_NAME, settings.REVIEWER_PASSWORD, UserRole.REVIEWER.value)
+    sales = sync_user(settings.SALES_EMAIL, settings.SALES_NAME, settings.SALES_PASSWORD, UserRole.SALES.value)
     
     db.commit()
     db.refresh(admin)

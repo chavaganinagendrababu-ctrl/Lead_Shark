@@ -67,6 +67,7 @@ def health_check():
 
 # API Routers
 app.include_router(auth.router, prefix=settings.API_V1_STR)
+app.include_router(auth.router)  # Dual-mount auth routes for root level compatibility
 app.include_router(dashboard.router, prefix=settings.API_V1_STR)
 app.include_router(leads.router, prefix=settings.API_V1_STR)
 app.include_router(discovery.router, prefix=settings.API_V1_STR)

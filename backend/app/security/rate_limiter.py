@@ -13,8 +13,14 @@ class SimpleRateLimiter:
         if os.getenv("TESTING") == "1" or os.getenv("ENVIRONMENT") == "testing":
             return
 
-        client_ip = identifier or (request.client.host if request.client else "unknown")
-        if client_ip == "testclient":
+        # Extract client IP, checking X-Forwarded-For for proxy/Render environments
+        forwarded = request.headers.get("x-forwarded-for") if request else None
+        if forwarded:
+            client_ip = forwarded.split(",")[0].strip()
+        else:
+            client_ip = identifier or (request.client.host if request and request.client else "unknown")
+
+        if client_ip in ("testclient", "127.0.0.1", "localhost"):
             return
 
         current_time = time.time()

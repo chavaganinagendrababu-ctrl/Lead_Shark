@@ -11,6 +11,15 @@ from app.main import app
 from app.database import SessionLocal, Base, engine
 from app.models import *
 from app.security.auth import get_password_hash, create_unsubscribe_token
+from app.utils.seeding import seed_database
+
+# Ensure database tables and initial seed data are initialized
+Base.metadata.create_all(bind=engine)
+_seed_db = SessionLocal()
+try:
+    seed_database(_seed_db)
+finally:
+    _seed_db.close()
 
 client = TestClient(app, raise_server_exceptions=True)
 

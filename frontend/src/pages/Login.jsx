@@ -16,13 +16,17 @@ export const Login = () => {
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
+      await login(email.trim(), password);
       navigate('/');
     } catch (err) {
       if (err.message && err.message.includes('Network Error')) {
         setError('Unable to reach backend server. If your Render backend is on the free tier, it takes ~30-50 seconds to wake up on first request. Please wait a moment and try again.');
+      } else if (err.response?.status === 404 || (typeof err.response?.data === 'string' && err.response?.data.includes('<!DOCTYPE html>'))) {
+        setError('API endpoint unreachable. Please ensure VITE_API_BASE_URL is set in your Vercel project settings to your deployed Render URL (e.g. https://leadshark-backend.onrender.com).');
+      } else if (err.response?.data?.detail) {
+        setError(err.response.data.detail);
       } else {
-        setError(err.response?.data?.detail || 'Authentication failed. Please verify credentials.');
+        setError('Authentication failed. Please verify credentials.');
       }
     } finally {
       setLoading(false);
