@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { CheckCircle2, ShieldAlert, Layers, AlertCircle, ArrowLeft } from 'lucide-react';
-import axios from 'axios';
+import api from '../services/api';
 
 export const Unsubscribe = () => {
   const [searchParams] = useSearchParams();
@@ -17,7 +17,7 @@ export const Unsubscribe = () => {
     }
     setStatus('processing');
     try {
-      const res = await axios.post(`/unsubscribe/${token}`);
+      const res = await api.post(`/unsubscribe/${token}`);
       setStatus('success');
       setMessage(res.data.message);
     } catch (err) {

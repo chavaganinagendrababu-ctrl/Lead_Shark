@@ -83,3 +83,4 @@ The platform is pre-seeded with 3 role accounts. On the login page, you can clic
 2. **Four-Eyes Governance:** Creators cannot self-approve production campaigns. Template edits revoke approvals automatically.
 3. **Transparent Reporting:** The application does not fabricate delivery, open, or click rates while in Version 1 Safe Mode.
 4. **Security Hardening:** Salted bcrypt hashing, JWT tokens, DDE formula injection protection on CSV exports, and token-bucket rate limiting on authentication.
+

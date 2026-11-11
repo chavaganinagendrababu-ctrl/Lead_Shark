@@ -65,6 +65,7 @@ def add_suppression(
     return entry
 
 @router.post("/unsubscribe/{token}", response_model=UnsubscribeResponse)
+@router.post("/api/unsubscribe/{token}", response_model=UnsubscribeResponse)
 @router.post("/api/compliance/unsubscribe/{token}", response_model=UnsubscribeResponse)
 def process_unsubscribe(
     token: str,
