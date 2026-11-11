@@ -56,6 +56,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 # Health Check Endpoint
 @app.get("/health")
+@app.get("/api/health")
 def health_check():
     return {
         "status": "healthy",
