@@ -1,11 +1,11 @@
 from contextlib import asynccontextmanager
 import logging
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request, status, Depends
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.database import engine, Base, SessionLocal
+from app.database import engine, Base, SessionLocal, get_db
 from app.models import *  # ensure all models are registered
 from app.utils.seeding import seed_database
 from app.routes import auth, dashboard, leads, discovery, campaigns, compliance, audit
@@ -58,11 +58,26 @@ async def global_exception_handler(request: Request, exc: Exception):
 @app.get("/health")
 @app.get("/api/health")
 def health_check():
+    db_connected = True
+    provisioned_users = 0
+    try:
+        from app.models.user import User
+        db = SessionLocal()
+        try:
+            provisioned_users = db.query(User).count()
+        finally:
+            db.close()
+    except Exception as e:
+        db_connected = False
+        logger.error(f"Database health check error: {str(e)}")
+
     return {
-        "status": "healthy",
+        "status": "healthy" if db_connected else "degraded",
         "service": "Lead Shark Backend",
         "environment": settings.ENVIRONMENT,
-        "database": "connected"
+        "database": "connected" if db_connected else "disconnected",
+        "users_provisioned": provisioned_users >= 3,
+        "users_count": provisioned_users
     }
 
 # API Routers

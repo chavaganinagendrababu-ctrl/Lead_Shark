@@ -21,17 +21,28 @@ export const Login = () => {
     } catch (err) {
       if (err.message && err.message.includes('Network Error')) {
         setError('Unable to reach backend server. If your Render backend is on the free tier, it takes ~30-50 seconds to wake up on first request. Please wait a moment and try again.');
-      } else if (err.response?.status === 404 || (typeof err.response?.data === 'string' && err.response?.data.includes('<!DOCTYPE html>'))) {
-        setError('API endpoint unreachable. Please ensure VITE_API_BASE_URL is set in your Vercel project settings to your deployed Render URL (e.g. https://leadshark-backend.onrender.com).');
+      } else if (err.response?.status === 404 || err.response?.status === 405 || (typeof err.response?.data === 'string' && err.response?.data.includes('<!DOCTYPE html>'))) {
+        setError('API endpoint unreachable. Please ensure VITE_API_BASE_URL is set in your Vercel project settings to your deployed Render URL (e.g. https://leadshark-backend.onrender.com) and that the project was redeployed.');
       } else if (err.response?.data?.detail) {
-        setError(err.response.data.detail);
+        const detail = err.response.data.detail;
+        if (Array.isArray(detail)) {
+          setError(detail.map(d => d.msg || d).join(', '));
+        } else if (typeof detail === 'string') {
+          setError(detail);
+        } else {
+          setError('Invalid credentials');
+        }
       } else {
-        setError('Authentication failed. Please verify credentials.');
+        setError(err.message || 'Authentication failed. Please verify credentials.');
       }
     } finally {
       setLoading(false);
     }
   };
+
+  const isVercelMissingEnv = typeof window !== 'undefined' &&
+    window.location.hostname.endsWith('vercel.app') &&
+    !import.meta.env.VITE_API_BASE_URL;
 
   const quickFill = (roleEmail, rolePass) => {
     setEmail(roleEmail);
@@ -59,6 +70,15 @@ export const Login = () => {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <div className="bg-navy-900 py-8 px-6 shadow-2xl rounded-2xl sm:px-10 border border-slate-800">
+          {isVercelMissingEnv && (
+            <div className="mb-5 p-3.5 rounded-lg bg-amber-950/80 border border-amber-800/80 text-amber-200 text-xs flex items-start gap-2.5">
+              <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+              <span>
+                <strong>Action Required in Vercel:</strong> Missing <code className="bg-amber-900/60 px-1 py-0.5 rounded text-white">VITE_API_BASE_URL</code> environment variable. Add it in Vercel Project Settings &gt; Environment Variables pointing to your Render backend URL, then click <strong>Redeploy</strong>.
+              </span>
+            </div>
+          )}
+
           {error && (
             <div className="mb-5 p-3.5 rounded-lg bg-red-950/80 border border-red-800/80 text-red-200 text-sm flex items-start gap-2.5">
               <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />

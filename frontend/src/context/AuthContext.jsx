@@ -32,17 +32,24 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     const cleanEmail = email ? email.trim().toLowerCase() : '';
     const res = await api.post('/auth/login', { email: cleanEmail, password });
-    const { access_token } = res.data;
+    const { access_token, user: serverUser } = res.data;
+    if (!access_token) {
+      throw new Error('Authentication token not received from server.');
+    }
     localStorage.setItem('leadshark_token', access_token);
     setToken(access_token);
 
-    // Fetch user details
-    const userRes = await api.get('/auth/me', {
-      headers: { Authorization: `Bearer ${access_token}` }
-    });
-    setUser(userRes.data);
-    localStorage.setItem('leadshark_user', JSON.stringify(userRes.data));
-    return userRes.data;
+    let loggedInUser = serverUser;
+    if (!loggedInUser) {
+      // Fallback if user object was not bundled in login response
+      const userRes = await api.get('/auth/me', {
+        headers: { Authorization: `Bearer ${access_token}` }
+      });
+      loggedInUser = userRes.data;
+    }
+    setUser(loggedInUser);
+    localStorage.setItem('leadshark_user', JSON.stringify(loggedInUser));
+    return loggedInUser;
   };
 
   const logout = () => {
