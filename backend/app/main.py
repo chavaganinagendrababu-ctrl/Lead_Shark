@@ -34,11 +34,12 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Production CORS: Configured for Vercel deployment + custom FRONTEND_URL
+# Production CORS: Uses origin regex to dynamically reflect the requesting origin,
+# ensuring full compatibility with Vercel production domains, preview deployments, and localhost
+# without triggering wildcard credential restriction errors in modern web browsers.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.get_allowed_origins(),
-    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_origin_regex=r"^https?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

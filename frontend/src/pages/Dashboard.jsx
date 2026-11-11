@@ -20,14 +20,22 @@ export const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [loadError, setLoadError] = useState(null);
 
   const fetchStats = async () => {
     try {
       setRefreshing(true);
+      setLoadError(null);
       const res = await api.get('/dashboard/stats');
       setStats(res.data);
     } catch (err) {
       console.error('Failed to load dashboard metrics', err);
+      const errMsg = err.response?.data?.detail || err.message;
+      if (err.message && err.message.includes('Network Error')) {
+        setLoadError('Connecting to backend... If your Render web service is on the free tier, it may take 30-50s to wake up on initial request.');
+      } else {
+        setLoadError(errMsg || 'Failed to synchronize with live database.');
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -62,6 +70,20 @@ export const Dashboard = () => {
       title="Platform Overview" 
       subtitle="Real-time compliance status, audience readiness, and activity streams"
     >
+      {loadError && (
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>{loadError}</span>
+          </div>
+          <button 
+            onClick={fetchStats}
+            className="px-3 py-1 bg-amber-200 hover:bg-amber-300 rounded font-semibold text-amber-900 text-xs shrink-0 transition"
+          >
+            Retry Connection
+          </button>
+        </div>
+      )}
       {/* Top action row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
         <div>

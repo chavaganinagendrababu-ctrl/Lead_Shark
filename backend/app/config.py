@@ -47,23 +47,4 @@ class Settings(BaseSettings):
             url = url.replace("postgres://", "postgresql://", 1)
         return url
 
-    def get_allowed_origins(self) -> List[str]:
-        origins = [
-            "http://localhost:5173",
-            "http://localhost:3000",
-            "http://127.0.0.1:5173",
-            "https://leadshark.vercel.app"
-        ]
-        if self.FRONTEND_URL:
-            clean = self.FRONTEND_URL.strip().rstrip("/")
-            if clean and clean not in origins:
-                origins.append(clean)
-        extra = os.getenv("ADDITIONAL_CORS_ORIGINS")
-        if extra:
-            for o in extra.split(","):
-                o_clean = o.strip().rstrip("/")
-                if o_clean and o_clean not in origins:
-                    origins.append(o_clean)
-        return origins
-
 settings = Settings()

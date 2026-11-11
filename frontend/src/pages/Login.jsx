@@ -19,7 +19,11 @@ export const Login = () => {
       await login(email, password);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Authentication failed. Please verify credentials.');
+      if (err.message && err.message.includes('Network Error')) {
+        setError('Unable to reach backend server. If your Render backend is on the free tier, it takes ~30-50 seconds to wake up on first request. Please wait a moment and try again.');
+      } else {
+        setError(err.response?.data?.detail || 'Authentication failed. Please verify credentials.');
+      }
     } finally {
       setLoading(false);
     }

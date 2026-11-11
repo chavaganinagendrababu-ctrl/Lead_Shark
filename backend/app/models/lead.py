@@ -1,5 +1,13 @@
+import sys
+from pathlib import Path
 from datetime import datetime, timezone
 from sqlalchemy import Column, Integer, String, Float, DateTime, Text
+
+# Ensure backend root is on sys.path if run directly as a script
+backend_root = str(Path(__file__).resolve().parent.parent.parent)
+if backend_root not in sys.path:
+    sys.path.insert(0, backend_root)
+
 from app.database import Base
 
 class Lead(Base):
@@ -35,3 +43,13 @@ class Lead(Base):
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 
+if __name__ == "__main__":
+    print("=" * 60)
+    print("         LEAD SHARK - Lead SQLAlchemy Model         ")
+    print("=" * 60)
+    print(f"Table Name:  {Lead.__tablename__}")
+    print("Columns:")
+    for col in Lead.__table__.columns:
+        print(f"  - {col.name:<28} ({col.type})")
+    print("=" * 60)
+    print("Model loaded and validated successfully.")

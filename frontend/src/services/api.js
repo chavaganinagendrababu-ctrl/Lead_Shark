@@ -1,17 +1,20 @@
 import axios from 'axios';
 
-// Read base URL from Vite environment variable with clean normalization
-const getApiBaseUrl = () => {
+const getBaseUrl = () => {
   const envUrl = import.meta.env.VITE_API_BASE_URL;
   if (!envUrl) {
     return '/api';
   }
-  const cleanUrl = envUrl.trim().replace(/\/+$/, '');
-  return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`;
+  let url = envUrl.trim().replace(/\/+$/, '');
+  // If the user specified an absolute backend URL without the /api suffix, append it automatically
+  if ((url.startsWith('http://') || url.startsWith('https://')) && !url.endsWith('/api')) {
+    url = `${url}/api`;
+  }
+  return url;
 };
 
 const api = axios.create({
-  baseURL: getApiBaseUrl(),
+  baseURL: getBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },

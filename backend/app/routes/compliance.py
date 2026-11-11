@@ -18,6 +18,7 @@ from app.services.audit import log_audit
 
 router = APIRouter(tags=["Compliance"])
 
+@router.get("/suppression", response_model=List[SuppressionResponse])
 @router.get("/api/suppression", response_model=List[SuppressionResponse])
 def get_suppression_list(
     search: Optional[str] = None,
@@ -37,6 +38,7 @@ def get_suppression_list(
         )
     return query.order_by(SuppressionList.id.desc()).all()
 
+@router.post("/suppression", response_model=SuppressionResponse, status_code=status.HTTP_201_CREATED)
 @router.post("/api/suppression", response_model=SuppressionResponse, status_code=status.HTTP_201_CREATED)
 def add_suppression(
     supp_in: SuppressionCreate,

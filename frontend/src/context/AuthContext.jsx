@@ -19,7 +19,9 @@ export const AuthProvider = ({ children }) => {
           setUser(res.data);
           localStorage.setItem('leadshark_user', JSON.stringify(res.data));
         } catch (err) {
-          logout();
+          if (err.response && err.response.status === 401) {
+            logout();
+          }
         }
       }
       setLoading(false);
