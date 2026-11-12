@@ -54,6 +54,19 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": "An internal server error occurred. Please contact the compliance administrator."}
     )
 
+# Root Index Endpoint
+@app.get("/")
+@app.get("/api")
+def root():
+    return {
+        "service": "Lead Shark Backend API",
+        "status": "online",
+        "environment": settings.ENVIRONMENT,
+        "version": "1.0.0",
+        "docs_url": "/docs",
+        "health_check": "/health"
+    }
+
 # Health Check Endpoint
 @app.get("/health")
 @app.get("/api/health")
