@@ -16,14 +16,24 @@ logger = logging.getLogger("leadshark")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: create tables and seed default accounts/data
-    logger.info("Initializing Lead Shark database tables...")
-    Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
+    logger.info("Starting Lead Shark backend application...")
     try:
-        seed_database(db)
-        logger.info("Database seeding verified.")
-    finally:
-        db.close()
+        logger.info("Initializing Lead Shark database tables...")
+        Base.metadata.create_all(bind=engine)
+        db = SessionLocal()
+        try:
+            seed_database(db)
+            logger.info("Database schema initialized and seed accounts verified.")
+        finally:
+            db.close()
+    except Exception as exc:
+        logger.critical(
+            f"FATAL DATABASE STARTUP ERROR: Could not connect to or initialize database: {exc}. "
+            f"Please verify DATABASE_URL in your Render Environment settings. "
+            f"Ensure your PostgreSQL database is active and that no placeholder hostname is configured.",
+            exc_info=True
+        )
+        raise exc
     yield
     logger.info("Lead Shark backend shutting down.")
 
