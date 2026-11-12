@@ -16,3 +16,4 @@ if os.path.isdir(os.path.join(BASE_DIR, "app")) and BASE_DIR not in sys.path:
 from app.main import app
 
 application = app
+

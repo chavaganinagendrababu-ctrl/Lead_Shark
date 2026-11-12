@@ -15,3 +15,4 @@ else
     echo "Searching python path for app.main..."
     exec python -m uvicorn app.main:app --host 0.0.0.0 --port "$PORT"
 fi
+

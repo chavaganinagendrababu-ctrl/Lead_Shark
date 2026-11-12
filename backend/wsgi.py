@@ -16,3 +16,4 @@ if os.path.isdir(os.path.join(PARENT_DIR, "app")) and PARENT_DIR not in sys.path
 from app.main import app
 
 application = app
+
